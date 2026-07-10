@@ -48,6 +48,11 @@
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"><span></span></div>
+  <canvas class="tech-canvas" id="techCanvas" aria-hidden="true"></canvas>
+  <div class="noise-layer" aria-hidden="true"></div>
+
   <div class="ambient ambient-one" aria-hidden="true"></div>
   <div class="ambient ambient-two" aria-hidden="true"></div>
   <div class="background-grid" aria-hidden="true"></div>
@@ -55,7 +60,7 @@
   <nav class="navbar navbar-expand-lg fixed-top portfolio-nav" id="mainNav">
     <div class="container">
       <a class="navbar-brand brand-mark" href="#home" aria-label="Tanvir Rahman Prince home">
-        <span class="brand-bracket">&lt;</span>TRP<span class="brand-slash">/</span><span class="brand-bracket">&gt;</span>
+        <span class="brand-bracket">&lt;</span>TRP<span class="brand-slash">.dev</span><span class="brand-bracket">/&gt;</span>
       </a>
 
       <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +92,10 @@
   <main id="main">
     <section class="hero-section min-vh-100 d-flex align-items-center" id="home">
       <div class="container position-relative">
+        <div class="system-status" aria-hidden="true">
+          <span><i></i> SYSTEM ONLINE</span>
+          <span>23.8103° N / 90.4125° E</span>
+        </div>
         <div class="row align-items-center gy-5">
           <div class="col-lg-7">
             <div class="reveal-up">
@@ -141,7 +150,7 @@
                 <span class="orbit-dot dot-three"></span>
               </div>
 
-              <div class="profile-card">
+              <div class="profile-card" data-tilt>
                 <div class="profile-card-top d-flex justify-content-between align-items-center">
                   <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
                   <span class="mono-label small">profile.ts</span>
@@ -160,6 +169,13 @@
               <div class="floating-chip chip-left"><i class="bi bi-braces"></i> Clean Code</div>
               <div class="floating-chip chip-right"><i class="bi bi-lightning-charge-fill"></i> Fast APIs</div>
             </div>
+          </div>
+        </div>
+
+        <div class="tech-rail" aria-label="Core technologies">
+          <div class="tech-rail-track">
+            <span>PHP</span><i>◆</i><span>LARAVEL</span><i>◆</i><span>JAVA</span><i>◆</i><span>SPRING BOOT</span><i>◆</i><span>REST API</span><i>◆</i><span>REDIS</span><i>◆</i><span>DOCKER</span><i>◆</i><span>MICROSERVICES</span><i>◆</i>
+            <span aria-hidden="true">PHP</span><i aria-hidden="true">◆</i><span aria-hidden="true">LARAVEL</span><i aria-hidden="true">◆</i><span aria-hidden="true">JAVA</span><i aria-hidden="true">◆</i><span aria-hidden="true">SPRING BOOT</span><i aria-hidden="true">◆</i><span aria-hidden="true">REST API</span><i aria-hidden="true">◆</i><span aria-hidden="true">REDIS</span><i aria-hidden="true">◆</i><span aria-hidden="true">DOCKER</span><i aria-hidden="true">◆</i><span aria-hidden="true">MICROSERVICES</span><i aria-hidden="true">◆</i>
           </div>
         </div>
 
@@ -304,7 +320,7 @@
 
         <div class="row g-4">
           <div class="col-lg-6 reveal-up">
-            <article class="project-card project-featured h-100">
+            <article class="project-card project-featured h-100" data-tilt>
               <div class="project-number">01</div>
               <div class="project-icon"><i class="bi bi-bank"></i></div>
               <span class="project-label">Government · Financial System</span>
@@ -323,7 +339,7 @@
           </div>
 
           <div class="col-lg-6 reveal-up">
-            <article class="project-card h-100">
+            <article class="project-card h-100" data-tilt>
               <div class="project-number">02</div>
               <div class="project-icon"><i class="bi bi-airplane-engines"></i></div>
               <span class="project-label">Travel · High Traffic</span>
@@ -342,7 +358,7 @@
           </div>
 
           <div class="col-lg-6 reveal-up">
-            <article class="project-card h-100">
+            <article class="project-card h-100" data-tilt>
               <div class="project-number">03</div>
               <div class="project-icon"><i class="bi bi-file-earmark-check"></i></div>
               <span class="project-label">Government · Licensing</span>
@@ -361,7 +377,7 @@
           </div>
 
           <div class="col-lg-6 reveal-up">
-            <article class="project-card h-100">
+            <article class="project-card h-100" data-tilt>
               <div class="project-number">04</div>
               <div class="project-icon"><i class="bi bi-people"></i></div>
               <span class="project-label">UNDP · Social Impact</span>

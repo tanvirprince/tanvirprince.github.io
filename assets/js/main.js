@@ -8,6 +8,7 @@
   const themeToggle = document.getElementById("themeToggle");
   const themeIcon = themeToggle?.querySelector("i");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   const storage = {
     get(key) {
@@ -119,6 +120,134 @@
       };
       window.setTimeout(tick, 1200);
     }
+  }
+
+  /* Precision cursor: a fast core and a softly delayed targeting ring. */
+  const cursorDot = document.getElementById("cursorDot");
+  const cursorRing = document.getElementById("cursorRing");
+  if (finePointer && !reducedMotion && cursorDot && cursorRing) {
+    document.body.classList.add("cursor-enabled");
+    let pointerX = window.innerWidth / 2;
+    let pointerY = window.innerHeight / 2;
+    let ringX = pointerX;
+    let ringY = pointerY;
+
+    const renderCursor = () => {
+      ringX += (pointerX - ringX) * 0.16;
+      ringY += (pointerY - ringY) * 0.16;
+      cursorDot.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`;
+      cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+      window.requestAnimationFrame(renderCursor);
+    };
+
+    window.addEventListener("mousemove", (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      document.body.classList.add("cursor-ready");
+      document.body.classList.toggle("cursor-hover", Boolean(event.target.closest("a, button, [data-tilt]")));
+    }, { passive: true });
+    window.addEventListener("mousedown", () => document.body.classList.add("cursor-down"));
+    window.addEventListener("mouseup", () => document.body.classList.remove("cursor-down"));
+    window.addEventListener("mouseout", (event) => {
+      if (!event.relatedTarget) document.body.classList.remove("cursor-ready");
+    });
+    renderCursor();
+  }
+
+  /* Subtle 3D response for featured surfaces. */
+  if (finePointer && !reducedMotion) {
+    document.querySelectorAll("[data-tilt]").forEach((card) => {
+      card.addEventListener("mousemove", (event) => {
+        const rect = card.getBoundingClientRect();
+        const rotateX = ((event.clientY - rect.top) / rect.height - 0.5) * -5;
+        const rotateY = ((event.clientX - rect.left) / rect.width - 0.5) * 5;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+      });
+      card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+    });
+  }
+
+  /* Animated service graph: lightweight canvas nodes inspired by distributed systems. */
+  const canvas = document.getElementById("techCanvas");
+  if (canvas && !reducedMotion) {
+    const context = canvas.getContext("2d");
+    let width = 0;
+    let height = 0;
+    let nodes = [];
+    let canvasPointer = { x: -1000, y: -1000 };
+    let accentColor = getComputedStyle(root).getPropertyValue("--accent").trim();
+
+    const makeNode = () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.18,
+      radius: Math.random() * 1.2 + 0.5
+    });
+
+    const resizeCanvas = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const count = Math.min(64, Math.max(22, Math.floor(width / 28)));
+      nodes = Array.from({ length: count }, makeNode);
+      accentColor = getComputedStyle(root).getPropertyValue("--accent").trim();
+    };
+
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+    window.addEventListener("mousemove", (event) => {
+      canvasPointer = { x: event.clientX, y: event.clientY };
+    }, { passive: true });
+    themeToggle?.addEventListener("click", () => {
+      window.setTimeout(() => { accentColor = getComputedStyle(root).getPropertyValue("--accent").trim(); }, 0);
+    });
+
+    const drawNetwork = () => {
+      context.clearRect(0, 0, width, height);
+      nodes.forEach((node, index) => {
+        const pointerDistance = Math.hypot(node.x - canvasPointer.x, node.y - canvasPointer.y);
+        if (pointerDistance < 130 && pointerDistance > 0) {
+          node.x += ((node.x - canvasPointer.x) / pointerDistance) * 0.28;
+          node.y += ((node.y - canvasPointer.y) / pointerDistance) * 0.28;
+        }
+
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < -10) node.x = width + 10;
+        if (node.x > width + 10) node.x = -10;
+        if (node.y < -10) node.y = height + 10;
+        if (node.y > height + 10) node.y = -10;
+
+        context.globalAlpha = 0.7;
+        context.fillStyle = accentColor;
+        context.beginPath();
+        context.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        context.fill();
+
+        for (let otherIndex = index + 1; otherIndex < nodes.length; otherIndex += 1) {
+          const other = nodes[otherIndex];
+          const distance = Math.hypot(node.x - other.x, node.y - other.y);
+          if (distance > 115) continue;
+          context.globalAlpha = (1 - distance / 115) * 0.17;
+          context.strokeStyle = accentColor;
+          context.lineWidth = 0.6;
+          context.beginPath();
+          context.moveTo(node.x, node.y);
+          context.lineTo(other.x, other.y);
+          context.stroke();
+        }
+      });
+      context.globalAlpha = 1;
+      window.requestAnimationFrame(drawNetwork);
+    };
+
+    resizeCanvas();
+    drawNetwork();
   }
 
   const year = document.getElementById("currentYear");
